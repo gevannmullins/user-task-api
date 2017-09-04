@@ -2,6 +2,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+var CronJob = require('cron').CronJob;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -15,6 +16,67 @@ const router = express.Router();
 const mc = require('./db_connection_mysql');
 mc.connect();
 
+/**
+ * Some custom functions for doing some manipulations
+ */
+function next_pending_date(date_time_entered) {
+
+    var date = new Date(date_time_entered);
+    var newdate = new Date(date);
+
+    newdate.setDate(newdate.getDate() + 3);
+
+    var dd = newdate.getDate();
+    var mm = newdate.getMonth() + 1;
+    var yyyy = newdate.getFullYear();
+
+    var someFormattedDate = yyyy + '-' + mm + '-' + dd + ' ' + 'H:i:s'; // current date time format "2016-05-25 14:25:00"
+    return someFormattedDate;
+}
+
+function check_date_passed(date_time_entered) {
+    var today, someday, pending_value;
+    today = new Date();
+    someday = new Date();
+    someday.setFullYear(date_time_entered);
+
+    if (someday > today) {
+        pending_value = 1;
+    } else {
+        pending_value = 0;
+    }
+
+    return pending_value;
+}
+
+router.get('/run_cron', function (req, res) {
+    mc.query('SELECT * FROM tasks', function (error, results, fields) {
+        if (error) throw error;
+
+        var index, len;
+        console.log("The following is a list of tasks with dates pass due");
+        for (index = 0, len = results.length; index < len; ++index) {
+            var pending_value = check_date_passed(results[index]['date_time']);
+            if (pending_value === 0 || pending_value === 'pending')
+            {
+                console.log(results[index]);
+
+                mc.query("UPDATE tasks SET status = ? WHERE id = ?",
+                    ['done',results[index]['id']],
+                    function (error, results, fields) {
+                        if (error) throw error;
+                        return res.send({
+                            error: false,
+                            data: results,
+                            message: 'Task has been updated successfully.'
+                        });
+                    });
+
+            }
+        }
+
+    });
+});
 /**
  * Setting all the users routes
  */
@@ -185,6 +247,8 @@ router.post('/users/:user_id/tasks', function (req, res) {
     var task_name = req.body.name;
     var task_descripton = req.body.description;
     var task_date_time = req.body.date_time;
+    var next_execute_date_time = next_pending_date(req.body.date_time);
+    console.log(next_execute_date_time);
 
     if (!task_name) {
         return res.status(400).send({
@@ -198,6 +262,8 @@ router.post('/users/:user_id/tasks', function (req, res) {
             name: task_name,
             description: task_descripton,
             date_time: task_date_time,
+            next_execute_date_time: next_execute_date_time,
+            pending: pending,
             user_id: user_id
         },
         function (error, results, fields) {

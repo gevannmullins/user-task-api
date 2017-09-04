@@ -7,11 +7,13 @@ USE `users_tasks`;
 -- Table structure for table `tasks`
 --
 
-CREATE TABLE `tasks` (
+CREATE TABLE IF NOT EXISTS `tasks` (
   `id` int(11) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `date_time` varchar(255) DEFAULT NULL,
+  `next_execute_date_time` varchar(255) DEFAULT NULL,
+  `pending` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -19,20 +21,21 @@ CREATE TABLE `tasks` (
 -- Dumping data for table `tasks`
 --
 
-INSERT INTO `tasks` (`id`, `name`, `description`, `date_time`, `user_id`) VALUES
-(2, 'tas1', 'describing task1', '2016-05-25 14:25:00', 1),
-(3, 'task2', 'again task2', '2016-05-25 14:25:00', 2),
-(4, 'testTask', 'this is the test description', '2016-05-25 14:25:00', 3),
-(5, 'testTask', 'this is the test description', '2016-05-25 14:25:00', 4),
-(6, 'testTask', 'this is the test description', '2016-05-25 14:25:00', 5),
-(7, 'testTask', 'this is the test description', '2016-05-25 14:25:00', 5),
-(8, 'testTask', 'this is the test description', '2016-05-25 14:25:00', 6),
-(9, 'testTask', 'this is the test description', '2016-05-25 14:25:00', 7),
-(10, 'testTask', 'this is the test description', '2016-05-25 14:25:00', 4),
-(11, 'testTask', 'this is the test description', '2016-05-25 14:25:00', 7),
-(12, 'testTask', 'this is the test description', '2016-05-25 14:25:00', 1),
-(13, 'testTask', 'this is the test description', '2016-05-25 14:25:00', 2),
-(14, 'testTask', 'this is the test description', '2016-05-25 14:25:00', 2);
+INSERT INTO `tasks` (`id`, `name`, `description`, `date_time`, `next_execute_date_time`, `status`, `user_id`) VALUES
+(1, 'task1', 'describing task1', '2016-05-25 14:25:00', '', 1, 1),
+(2, 'tasking1', 'describing task1', '2016-05-25 14:25:00', '', 1, 1),
+(3, 'task2', 'again task2', '2016-05-25 14:25:00', '', 1, 2),
+(4, 'testTask', 'this is the test description', '2016-05-25 14:25:00', '', 1, 3),
+(5, 'testTask', 'this is the test description', '2016-05-25 14:25:00', '', 1, 4),
+(6, 'testTask', 'this is the test description', '2016-05-25 14:25:00', '', 1, 5),
+(7, 'testTask', 'this is the test description', '2016-05-25 14:25:00', '', 1, 5),
+(8, 'testTask', 'this is the test description', '2016-05-25 14:25:00', '', 1, 6),
+(9, 'testTask', 'this is the test description', '2016-05-25 14:25:00', '', 1, 7),
+(10, 'testTask', 'this is the test description', '2016-05-25 14:25:00', '', 1, 4),
+(11, 'testTask', 'this is the test description', '2016-05-25 14:25:00', '', 1, 7),
+(12, 'testTask', 'this is the test description', '2016-05-25 14:25:00', '', 1, 1),
+(13, 'testTask', 'this is the test description', '2016-05-25 14:25:00', '', 1, 2),
+(14, 'testTask', 'this is the test description', '2016-05-25 14:25:00', '', 1, 2);
 
 -- --------------------------------------------------------
 
@@ -40,7 +43,7 @@ INSERT INTO `tasks` (`id`, `name`, `description`, `date_time`, `user_id`) VALUES
 -- Table structure for table `users`
 --
 
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL,
   `username` varchar(255) DEFAULT NULL,
   `first_name` varchar(255) DEFAULT NULL,
@@ -90,7 +93,4 @@ ALTER TABLE `tasks`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
